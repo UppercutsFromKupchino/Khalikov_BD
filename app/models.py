@@ -10,7 +10,7 @@ from app import db
 
 
 class User(db.Model, UserMixin):
-    __teblename__ = '_user'
+    __tablename__ = '_user'
     __table_args__ = {'extend_existing': True}
 
     id_of_user = db.Column(db.Integer(), primary_key=True)
