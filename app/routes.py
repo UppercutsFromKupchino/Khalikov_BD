@@ -12,10 +12,10 @@ def index():
 @app.route('/login')
 def login():
     loginform = LoginForm()
-    return render_template("login.html")
+    return render_template("login.html", loginform=loginform)
 
 
 @app.route('/register')
 def register():
     registerform = RegisterForm()
-    return render_template("register.html")
+    return render_template("register.html", registerform=registerform)
