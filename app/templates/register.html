@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+    <div class="cap-links">
+        <a href="{{ url_for('index') }}">Home page</a>
+        <a href="{{ url_for('login') }}">Login</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+     <ul>
+     {% for message in messages %}
+         <li>{{ message }}</li>
+     {% endfor %}
+     </ul>
+    {% endif %}
+    {% endwith %}
+    <form class="register-form" action="{{ url_for('register') }}" method="post">
+        {{ registerform.hidden_tag() }}
+        {{ registerform.loginfield(placeholder_="Login", class_="registerform-loginfield") }}<br>
+        {{ registerform.passwordfield(placeholder_="Password", class_="registerform-passwordfield") }}<br>
+        {{ registerform.fiofield(placeholder_="FIO", class_="registerform-fiofield") }}<br>
+        {{ registerform.phonefield(placeholder_="Phone", class_="registerform-phonefield") }}<br>
+        {{ registerform.submitfield(class_="registerform-submitfield") }}
+    </form>
+</body>
+</html>
