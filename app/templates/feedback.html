@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback</title>
+</head>
+<body>
+    <div class="cap-links">
+        <a href="{{ url_for('index') }}">Home page</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+     <ul>
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+     </ul>
+    {% endif %}
+    {% endwith %}
+    <form class="feedback-form" action="{{ url_for('feedback') }}" method="post">
+        {{ feedbackform.hidden_tag() }}
+        {{ feedbackform.textfield(placeholder_="Text of feedback", class_="feedbackform-textfield") }}<br>
+        {{ feedbackform.submitfield(placeholder_="Give a feedback", class_="feedbackform-submitfield") }}
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Текст отзыва</th>
+                <th>Пользователь</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in range() %}
+            <tr>
+                {# короче сюда надо вывести текст отзыва и логин пользователя #}
+                <td></td>
+                <td></td>
+                {# вот сверху епты #}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

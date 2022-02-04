@@ -1,8 +1,8 @@
 from app import app
 from flask import render_template, flash, url_for, session, redirect
-# from flask_login import login_user, logout_user
-from app.forms import LoginForm, RegisterForm
-from app.models import User, RoleOfUser
+from flask_login import login_user, logout_user, current_user
+from app.forms import LoginForm, RegisterForm, FeedbackForm
+from app.models import User, RoleOfUser, Feedback
 
 
 @app.route('/')
@@ -34,3 +34,12 @@ def register():
         return redirect(url_for('login'))
 
     return render_template("register.html", registerform=registerform)
+
+
+@app.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    feedbackform = FeedbackForm()
+    if feedbackform.validate_on_submit():
+        Feedback.add_feedback(feedbackform.textfield.data, current_user.get_id())
+        return redirect(url_for('feedback'))
+    return render_template("feedback.html", feedbackform=feedbackform)

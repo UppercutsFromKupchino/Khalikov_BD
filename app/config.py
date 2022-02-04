@@ -7,3 +7,4 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = f'{dialect}://{username}:{password}@{host}/{db_name}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = 'zxc-pudge'

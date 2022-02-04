@@ -17,3 +17,8 @@ class RegisterForm(FlaskForm):
     phonefield = IntegerField("Phone")
     rolefield = SelectField("Role", choices=[])
     submitfield = SubmitField()
+
+
+class FeedbackForm(FlaskForm):
+    textfield = StringField(validators=[DataRequired()])
+    submitfield = SubmitField()
