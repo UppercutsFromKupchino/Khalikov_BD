@@ -1,12 +1,13 @@
 from flask import flash, redirect, url_for
 from flask_login import UserMixin
 from app import db
-# from app import login_manager
+from app import bcrypt
+from app import login_manager
 
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(int(user_id))
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 class User(db.Model, UserMixin):
@@ -14,15 +15,32 @@ class User(db.Model, UserMixin):
     __table_args__ = {'extend_existing': True}
 
     id_of_user = db.Column(db.Integer(), primary_key=True)
+    password_of_user = db.Column(db.String(length=150), nullable=False)
+
     # role_of_user = db.relationship('RoleOfUser', backref='role_of_user', uselist=False)
 
     # Метод получения ID пользователя из таблицы
     def get_id(self):
         return self.id_of_user
 
+    @property
+    def unencrypted_password(self):
+        return self.unencrypted_password
+
+    @unencrypted_password.setter
+    def unencrypted_password(self, plain_text_password):
+        self.password_of_user = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+
+    def check_password_correction(self, attempted_password):
+        return bcrypt.check_password_hash(self.password_of_user, attempted_password)
+
+    @staticmethod
+    def get_user_for_login(login_of_user):
+        return User.query.filter_by(login_of_user=login_of_user).first()
+
     @staticmethod
     def add_user(password_of_user, fio_of_user, login_of_user, photo_of_user, phone_of_user, id_of_role):
-        user_to_add = User(password_of_user=password_of_user, fio_of_user=fio_of_user, login_of_user=login_of_user,
+        user_to_add = User(unencrypted_password=password_of_user, fio_of_user=fio_of_user, login_of_user=login_of_user,
                            photo_of_user=photo_of_user, phone_of_user=phone_of_user, id_of_role=id_of_role)
 
         db.session.add(user_to_add)
@@ -85,3 +103,8 @@ class RoleOfUser(db.Model):
     def get_role_for_name(name_of_role):
         chosen_role = RoleOfUser.query.filter_by(name_of_role=name_of_role).one()
         return chosen_role.id_of_role
+
+    @staticmethod
+    def get_role_for_id(id_of_role):
+        chosen_role = RoleOfUser.query.filter_by(id_of_role=id_of_role).one()
+        return chosen_role.name_of_role
