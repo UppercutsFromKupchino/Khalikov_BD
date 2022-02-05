@@ -30,12 +30,10 @@
             </tr>
         </thead>
         <tbody>
-        {% for i in range() %}
+        {% for feedback in feedback_now %}
             <tr>
-                {# короче сюда надо вывести текст отзыва и логин пользователя #}
-                <td></td>
-                <td></td>
-                {# вот сверху епты #}
+                <td>{{feedback.User.login_of_user}}</td>
+                <td>{{feedback.Feedback.text_of_feedback}}</td>
             </tr>
         {% endfor %}
         </tbody>

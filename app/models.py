@@ -1,4 +1,3 @@
-from flask import flash, redirect, url_for
 from flask_login import UserMixin
 from app import db
 from app import bcrypt
@@ -43,38 +42,31 @@ class User(db.Model, UserMixin):
         user_to_add = User(unencrypted_password=password_of_user, fio_of_user=fio_of_user, login_of_user=login_of_user,
                            photo_of_user=photo_of_user, phone_of_user=phone_of_user, id_of_role=id_of_role)
 
-        db.session.add(user_to_add)
-        db.session.commit()
-        # except:
-        #     db.session.rollback()
+        try:
+            db.session.add(user_to_add)
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 class Order(db.Model):
     __tablename__ = '_order'
     __table_args__ = {'extend_existing': True}
 
-    # id_of_consumer = db.relationship('User', backref='_user', uselist=False)
-
 
 class Ad(db.Model):
     __tablename__ = 'ad'
     __table_args__ = {'extend_existing': True}
-
-    # id_of_executor = db.relationship('User', backref='_user', uselist=False)
 
 
 class ConsumerOfAd(db.Model):
     __tablename__ = 'consumer_of_ad'
     __table_args__ = {'extend_existing': True}
 
-    # id_of_consumer = db.relationship('User', backref='_user', uselist=False)
-
 
 class ExecutorOfOrder(db.Model):
     __tablename__ = 'executor_of_order'
     __table_args__ = {'extend_existing': True}
-
-    # id_of_executor = db.relationship('User', backref='_user', uselist=False)
 
 
 class Feedback(db.Model):
@@ -82,13 +74,18 @@ class Feedback(db.Model):
     __table_args__ = {'extend_existing': True}
 
     @staticmethod
+    def get_all_feedback():
+        return db.session.query(Feedback, User).join(User, User.id_of_user == Feedback.id_of_user).all()
+
+    @staticmethod
     def add_feedback(text_of_feedback, id_of_user):
         feedback_to_add = Feedback(text_of_feedback=text_of_feedback, id_of_user=id_of_user)
 
-        db.session.add(feedback_to_add)
-        db.session.commit()
-
-    # id_of_user = db.relationship('User', backref='_user', uselist=False)
+        try:
+            db.session.add(feedback_to_add)
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 class RoleOfUser(db.Model):
