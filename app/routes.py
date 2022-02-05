@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, flash, url_for, session, redirect
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, RegisterForm, FeedbackForm
 from app.models import User, RoleOfUser, Feedback
 
@@ -50,6 +50,7 @@ def register():
 
 
 @app.route('/feedback', methods=['GET', 'POST'])
+@login_required
 def feedback():
 
     feedbackform = FeedbackForm()
