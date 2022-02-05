@@ -51,11 +51,19 @@ def register():
 
 @app.route('/feedback', methods=['GET', 'POST'])
 def feedback():
+
     feedbackform = FeedbackForm()
+
+    feedback_now = Feedback.get_all_feedback()
+
+    for feedback in feedback_now:
+        feed = feedback.Feedback.id_of_user
+
     if feedbackform.validate_on_submit():
         Feedback.add_feedback(feedbackform.textfield.data, current_user.get_id())
         return redirect(url_for('feedback'))
-    return render_template("feedback.html", feedbackform=feedbackform)
+
+    return render_template("feedback.html", feedbackform=feedbackform, feedback_now=feedback_now)
 
 
 @app.route('/logout')

@@ -82,13 +82,15 @@ class Feedback(db.Model):
     __table_args__ = {'extend_existing': True}
 
     @staticmethod
+    def get_all_feedback():
+        return db.session.query(Feedback, User).join(User, User.id_of_user == Feedback.id_of_user).all()
+
+    @staticmethod
     def add_feedback(text_of_feedback, id_of_user):
         feedback_to_add = Feedback(text_of_feedback=text_of_feedback, id_of_user=id_of_user)
 
         db.session.add(feedback_to_add)
         db.session.commit()
-
-    # id_of_user = db.relationship('User', backref='_user', uselist=False)
 
 
 class RoleOfUser(db.Model):
