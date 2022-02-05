@@ -2,6 +2,7 @@ from flask_login import UserMixin
 from app import db
 from app import bcrypt
 from app import login_manager
+from flask import flash
 
 
 @login_manager.user_loader
@@ -88,6 +89,16 @@ class Feedback(db.Model):
             db.session.add(feedback_to_add)
             db.session.commit()
         except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
+            db.session.rollback()
+
+    @staticmethod
+    def delete_feedback(id_of_feedback):
+        try:
+            Feedback.query.filter_by(id_of_feedback=id_of_feedback).delete()
+            db.session.commit()
+        except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()
 
 

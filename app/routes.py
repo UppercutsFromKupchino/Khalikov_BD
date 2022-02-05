@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, flash, url_for, session, redirect
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm, RegisterForm, FeedbackForm
+from app.forms import LoginForm, RegisterForm, FeedbackForm, DeletingFeedbackForm
 from app.models import User, RoleOfUser, Feedback
 
 
@@ -22,6 +22,7 @@ def login():
                                                                                        =loginform.passwordfield.data):
             login_user(user_on_identification)
             session['role'] = RoleOfUser.get_role_for_id(user_on_identification.id_of_role)
+            print(session['role'])
             return redirect(url_for('index'))
         else:
             return redirect(url_for('login'))
@@ -52,21 +53,28 @@ def register():
 @app.route('/feedback', methods=['GET', 'POST'])
 @login_required
 def feedback():
-
-    feedbackform = FeedbackForm()
-
     feedback_now = Feedback.get_all_feedback()
+    if session['role'] != 'moderator':
+        feedbackform = FeedbackForm()
 
-    if feedbackform.validate_on_submit():
-        Feedback.add_feedback(feedbackform.textfield.data, current_user.get_id())
-        return redirect(url_for('feedback'))
+        if feedbackform.validate_on_submit():
+            Feedback.add_feedback(feedbackform.textfield.data, current_user.get_id())
+            return redirect(url_for('feedback'))
+        return render_template("feedback.html", feedbackform=feedbackform, feedback_now=feedback_now)
 
-    return render_template("feedback.html", feedbackform=feedbackform, feedback_now=feedback_now)
+    elif session['role'] == 'moderator':
+        deleting_feedback_form = DeletingFeedbackForm()
+        print("deleting")
+
+        if deleting_feedback_form.submit_delete_field.data:
+            Feedback.delete_feedback(deleting_feedback_form.id_of_feedback_form.data)
+            return redirect(url_for('feedback'))
+        return render_template("feedback.html", deleting_feedback_form=deleting_feedback_form, feedback_now=feedback_now)
 
 
 @app.route('/logout')
 def logout():
     logout_user()
     # session.pop('role', None)
-    # session.clear()
+    session.clear()
     return redirect(url_for('index'))

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField, HiddenField
 from wtforms.validators import DataRequired
 
 
@@ -22,3 +22,8 @@ class RegisterForm(FlaskForm):
 class FeedbackForm(FlaskForm):
     textfield = StringField(validators=[DataRequired()])
     submitfield = SubmitField()
+
+
+class DeletingFeedbackForm(FlaskForm):
+    id_of_feedback_form = HiddenField()
+    submit_delete_field = SubmitField("Delete feedback")

@@ -17,6 +17,7 @@
      </ul>
     {% endif %}
     {% endwith %}
+    {% if session['role'] != 'moderator' %}
     <form class="feedback-form" action="{{ url_for('feedback') }}" method="post">
         {{ feedbackform.hidden_tag() }}
         {{ feedbackform.textfield(placeholder_="Text of feedback", class_="feedbackform-textfield") }}<br>
@@ -32,11 +33,36 @@
         <tbody>
         {% for feedback in feedback_now %}
             <tr>
-                <td>{{feedback.User.login_of_user}}</td>
                 <td>{{feedback.Feedback.text_of_feedback}}</td>
+                <td>{{feedback.User.login_of_user}}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    {% elif session['role'] == 'moderator' %}
+    <table>
+        <thead>
+            <tr>
+                <th>Текст отзыва</th>
+                <th>Пользователь</th>
+                <th>Удалить отзыв</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for feedback in feedback_now %}
+            <tr>
+                <td>{{ feedback.User.login_of_user}}</td>
+                <td>{{ feedback.Feedback.text_of_feedback}}</td>
+                <td>
+                    <form class="deleting-feedback-form" action="{{ url_for('feedback') }}" method="post">
+                        {{ deleting_feedback_form.id_of_feedback_form(value=feedback.Feedback.id_of_feedback) }}
+                        {{ deleting_feedback_form.submit_delete_field(placeholder_="Delete feedback") }}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
 </body>
 </html>
