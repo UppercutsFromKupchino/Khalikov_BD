@@ -75,7 +75,10 @@ class Feedback(db.Model):
 
     @staticmethod
     def get_all_feedback():
-        return db.session.query(Feedback, User).join(User, User.id_of_user == Feedback.id_of_user).all()
+        query = db.session.query(Feedback, User)
+        query = query.join(User, User.id_of_user == Feedback.id_of_user)
+        query = query.order_by(Feedback.id_of_feedback.desc())
+        return query.all()
 
     @staticmethod
     def add_feedback(text_of_feedback, id_of_user):
