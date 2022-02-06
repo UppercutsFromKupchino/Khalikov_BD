@@ -1,8 +1,8 @@
 from app import app
 from flask import render_template, flash, url_for, session, redirect
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm, RegisterForm, FeedbackForm, DeletingFeedbackForm, AddingOrderForm
-from app.models import User, RoleOfUser, Feedback, Order
+from app.forms import LoginForm, RegisterForm, FeedbackForm, DeletingFeedbackForm, AddingOrderForm, ExecutingOrderForm
+from app.models import User, RoleOfUser, Feedback, Order, ExecutorOfOrder
 import datetime
 
 
@@ -76,8 +76,9 @@ def feedback():
 @app.route('/order', methods=['GET', 'POST'])
 @login_required
 def order():
-
-    # orders = Order.get_orders_consumer(current_user.get_id())
+    print(current_user.get_id())
+    orders = Order.get_orders_consumer(current_user.get_id())
+    print(orders)
 
     if session['role'] == 'consumer':
 
@@ -91,7 +92,17 @@ def order():
 
             return redirect(url_for('order'))
 
-        return render_template("order.html", adding_order_form=adding_order_form)
+        return render_template("order.html", adding_order_form=adding_order_form, orders=orders)
+
+    if session['role'] == 'executor':
+
+        executing_order_form = ExecutingOrderForm()
+
+        if executing_order_form.submit_execute_field.data:
+
+            ExecutorOfOrder.execute_order(current_user.get_id(), executing_order_form.id_of_order_form.data)
+
+        return render_template("order.html", executing_order_form=executing_order_form, orders=orders)
 
 
 @app.route('/profile')

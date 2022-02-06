@@ -34,3 +34,7 @@ class AddingOrderForm(FlaskForm):
     price_of_order = IntegerField(validators=[DataRequired()])
     submitfield = SubmitField()
 
+
+class ExecutingOrderForm(FlaskForm):
+    id_of_order_form = HiddenField()
+    submit_execute_field = SubmitField("Execute feedback")

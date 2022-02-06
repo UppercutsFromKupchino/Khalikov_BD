@@ -56,13 +56,14 @@ class Order(db.Model):
     __tablename__ = '_order'
     __table_args__ = {'extend_existing': True}
 
-    # @staticmethod
-    # def get_orders_consumer(id_of_consumer):
-    #     query = db.session.query(Order, ExecutorOfOrder, User)
-    #     query = query.join(ExecutorOfOrder, Order.id_of_order == ExecutorOfOrder.id_of_order)
-    #     query = query.join(User, User.id_of_user == Order.id_of_consumer)
-    #     query = query.filter_by(ExecutorOfOrder.id_of_executor is None and Order.id_of_consumer != id_of_consumer)
-    #     return query
+    @staticmethod
+    def get_orders_consumer(id_of_consumer):
+        query = db.session.query(Order).with_entities(Order.id_of_order, Order.description_of_order, Order.price_of_order)
+        query = query.outerjoin(ExecutorOfOrder).with_entities(ExecutorOfOrder.id_of_executor, ExecutorOfOrder.id_of_order)
+        query = query.join(User)
+        # query = query.filter(ExecutorOfOrder.id_of_executor == 'None')
+        # query = query.filter(Order.id_of_consumer != id_of_consumer)
+        return query
 
     @staticmethod
     def add_order(datetime, description, price, id_of_consumer):
@@ -91,6 +92,18 @@ class ConsumerOfAd(db.Model):
 class ExecutorOfOrder(db.Model):
     __tablename__ = 'executor_of_order'
     __table_args__ = {'extend_existing': True}
+
+    @staticmethod
+    def execute_order(id_of_executor, id_of_consumer):
+        order_to_execute = ExecutorOfOrder(id_of_executor=id_of_executor, id_of_consumer=id_of_consumer)
+
+        try:
+            db.session.add(order_to_execute)
+            db.session.commit()
+            flash('Заказ успешно принят к исполнению')
+        except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
+            db.session.rollback()
 
 
 class Feedback(db.Model):
