@@ -1,8 +1,9 @@
 from app import app
 from flask import render_template, flash, url_for, session, redirect
 from flask_login import login_user, logout_user, current_user, login_required
-from app.forms import LoginForm, RegisterForm, FeedbackForm, DeletingFeedbackForm
-from app.models import User, RoleOfUser, Feedback
+from app.forms import LoginForm, RegisterForm, FeedbackForm, DeletingFeedbackForm, AddingOrderForm
+from app.models import User, RoleOfUser, Feedback, Order
+import datetime
 
 
 @app.route('/')
@@ -70,6 +71,33 @@ def feedback():
             Feedback.delete_feedback(deleting_feedback_form.id_of_feedback_form.data)
             return redirect(url_for('feedback'))
         return render_template("feedback.html", deleting_feedback_form=deleting_feedback_form, feedback_now=feedback_now)
+
+
+@app.route('/order', methods=['GET', 'POST'])
+@login_required
+def order():
+
+    # orders = Order.get_orders_consumer(current_user.get_id())
+
+    if session['role'] == 'consumer':
+
+        adding_order_form = AddingOrderForm()
+
+        if adding_order_form.submitfield.data:
+
+            current_time = datetime.datetime.now()
+            Order.add_order(current_time, adding_order_form.description_of_order.data,
+                            adding_order_form.price_of_order.data, current_user.get_id())
+
+            return redirect(url_for('order'))
+
+        return render_template("order.html", adding_order_form=adding_order_form)
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template("profile.html")
 
 
 @app.route('/logout')

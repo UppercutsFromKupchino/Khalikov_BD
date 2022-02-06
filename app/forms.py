@@ -27,3 +27,10 @@ class FeedbackForm(FlaskForm):
 class DeletingFeedbackForm(FlaskForm):
     id_of_feedback_form = HiddenField()
     submit_delete_field = SubmitField("Delete feedback")
+
+
+class AddingOrderForm(FlaskForm):
+    description_of_order = StringField(validators=[DataRequired()])
+    price_of_order = IntegerField(validators=[DataRequired()])
+    submitfield = SubmitField()
+

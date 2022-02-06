@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+</head>
+<body>
+    <div class="cap-links">
+        <a href="{{ url_for('index') }}">Home page</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+     <ul>
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+     </ul>
+    {% endif %}
+    {% endwith %}
+    {% if session['role'] == 'consumer' %}
+        <div class="adding-order-div">
+            <p>Add an order</p>
+            <form class="adding-order-form" action="{{ url_for('order') }}" method="post">
+                {{ adding_order_form.hidden_tag() }}
+                {{ adding_order_form.description_of_order(placeholder_="Description of order") }}<br>
+                {{ adding_order_form.price_of_order(placeholder_="Price of order") }}<br>
+                {{ adding_order_form.submitfield() }}
+            </form>
+        </div>
+{#        <div class="orders-table-consumer">#}
+{#            <table>#}
+{#                <thead>#}
+{#                    <tr>#}
+{#                        <th scope="col">Описание заказа</th>#}
+{#                        <th scope="col">Цена работы</th>#}
+{#                        <th scope="col">Логин пользователя</th>#}
+{#                    </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                    {% for order in orders %}#}
+{#                    <tr>#}
+{#                        <td>{{ order.Order.description_of_order }}</td>#}
+{#                        <td>{{ order.Order.price_of_order }}</td>#}
+{#                        <td>{{ order.User.login_of_user }}</td>#}
+{#                    </tr>#}
+{#                    {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+    {% elif session['role'] == 'executor' %}
+    {% elif session['role'] == 'moderator' %}
+    {% endif %}
+</body>
+</html>

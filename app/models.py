@@ -46,13 +46,36 @@ class User(db.Model, UserMixin):
         try:
             db.session.add(user_to_add)
             db.session.commit()
+            flash('Пользователь успешно зарегистрирован!')
         except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()
 
 
 class Order(db.Model):
     __tablename__ = '_order'
     __table_args__ = {'extend_existing': True}
+
+    # @staticmethod
+    # def get_orders_consumer(id_of_consumer):
+    #     query = db.session.query(Order, ExecutorOfOrder, User)
+    #     query = query.join(ExecutorOfOrder, Order.id_of_order == ExecutorOfOrder.id_of_order)
+    #     query = query.join(User, User.id_of_user == Order.id_of_consumer)
+    #     query = query.filter_by(ExecutorOfOrder.id_of_executor is None and Order.id_of_consumer != id_of_consumer)
+    #     return query
+
+    @staticmethod
+    def add_order(datetime, description, price, id_of_consumer):
+        order_to_add = Order(datetime_of_order=datetime, description_of_order=description,
+                             price_of_order=price, id_of_consumer=id_of_consumer)
+
+        try:
+            db.session.add(order_to_add)
+            db.session.commit()
+            flash('Заказ успешно добавлен!')
+        except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
+            db.session.rollback()
 
 
 class Ad(db.Model):
@@ -88,6 +111,7 @@ class Feedback(db.Model):
         try:
             db.session.add(feedback_to_add)
             db.session.commit()
+            flash('Отзыв успешно добавлен!')
         except:
             flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()
@@ -97,6 +121,7 @@ class Feedback(db.Model):
         try:
             Feedback.query.filter_by(id_of_feedback=id_of_feedback).delete()
             db.session.commit()
+            flash('Отзыв успешно удалён!')
         except:
             flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()
