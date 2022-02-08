@@ -18,6 +18,85 @@
      </ul>
     {% endif %}
     {% endwith %}
-
+    <p>Login: {{ user.login_of_user }}</p>
+    <p>FIO: {{ user.fio_of_user }}</p>
+    <p>Phone number: {{ user.phone_of_user }}</p>
+    {% if session['role'] == 'consumer' %}
+    <div class="consumer-profile-orders-table">
+        {% if orders_len == 0 %}
+            <p>There is no orders awaiting for execution</p>
+        {% elif orders_len != 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    <br>
+    <div class="consumer-profile-ads-table">
+        {% if ads_len == 0 %}
+            <p>There is no orders awaiting for execution</p>
+        {% elif ads_len != 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% elif session['role'] == 'executor' %}
+    <div class="executor-profile-orders-table">
+        {% if ads_len == 0 %}
+            <p>There is no orders awaiting for execution</p>
+        {% elif ads_len != 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    <br>
+    <div class="executor-profile-orders-table">
+        {% if orders_len == 0 %}
+            <p>There is no orders awaiting for execution</p>
+        {% elif orders_len != 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endif %}
 </body>
 </html>

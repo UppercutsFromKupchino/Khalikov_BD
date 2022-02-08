@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="cap-links">
+        <a href="{{ url_for('index') }}">Home page</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+     <ul>
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+     </ul>
+    {% endif %}
+    {% endwith %}
+    {% if session['role'] == 'executor' %}
+        <div class="adding-ad-div">
+            <p>Add an ad</p>
+            <form class="adding-ad-form" action="{{ url_for('ad') }}" method="post">
+                {{ adding_ad_form.hidden_tag() }}
+                {{ adding_ad_form.description_of_ad(placeholder_="Description of ad") }}<br>
+                {{ adding_ad_form.price_of_ad(placeholder_="Price of ad") }}<br>
+                {{ adding_ad_form.submit_add_field() }}
+            </form>
+        </div>
+        {% if ads_len == 0 %}
+        <p>There is no ads awaiting for consuming</p>
+        {% elif ads_len != 0 %}
+        <div class="ads-table-executor">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Description of ad</th>
+                        <th scope="col">Price of ad</th>
+                        <th scope="col">Login of user</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in ads %}
+                    <tr>
+                        <td>{{ ad.Ad.description_of_ad }}</td>
+                        <td>{{ ad.Ad.price_of_ad }}</td>
+                        <td>{{ ad.User.login_of_user }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    {% elif session['role'] == 'consumer' %}
+        {% if ads_len == 0 %}
+        <p>There is no ads awaiting for consuming</p>
+        {% elif ads_len != 0 %}
+        <div class="ads-table-consumer">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Description of ad</th>
+                        <th scope="col">Price of ad</th>
+                        <th scope="col">Login of user</th>
+                        <th scope="col">Consume an ad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in ads %}
+                    <tr>
+                        <td>{{ ad.Ad.description_of_ad }}</td>
+                        <td>{{ ad.Ad.price_of_ad }}</td>
+                        <td>{{ ad.User.login_of_user }}</td>
+                        <td>
+                            <form class="consuming-ad-form" action="{{ url_for('ad') }}" method="post">
+                                {{ consuming_ad_form.id_of_ad_form(value=ad.Ad.id_of_ad) }}
+                                {{ consuming_ad_form.submit_consume_field() }}
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    {% elif session['role'] == 'moderator' %}
+        {% if ads_len == 0 %}
+        <p>There is no ad awaiting for consuming</p>
+        {% elif ads_len != 0 %}
+        <div class="ads-table-moderator">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Description of ad</th>
+                        <th scope="col">Price of ad</th>
+                        <th scope="col">Login of user</th>
+                        <th scope="col">Delete an ad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in ads %}
+                    <tr>
+                        <td>{{ ad.Ad.description_of_ad }}</td>
+                        <td>{{ ad.Ad.price_of_ad }}</td>
+                        <td>{{ ad.User.login_of_user }}</td>
+                        <td>
+                            <form class="deleting-ad-form" action="{{ url_for('ad') }}" method="post">
+                                {{ deleting_ad_form.id_of_ad_form(value=ad.Ad.id_of_ad) }}
+                                {{ deleting_ad_form.submit_delete_field() }}
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

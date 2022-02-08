@@ -28,13 +28,16 @@
                 {{ adding_order_form.submitfield() }}
             </form>
         </div>
+        {% if orders_len == 0 %}
+        <p>There is no orders awaiting for execution</p>
+        {% elif orders_len != 0 %}
         <div class="orders-table-consumer">
             <table>
                 <thead>
                     <tr>
-                        <th scope="col">Описание заказа</th>
-                        <th scope="col">Цена работы</th>
-                        <th scope="col">Логин пользователя</th>
+                        <th scope="col">Description of order</th>
+                        <th scope="col">Price of order</th>
+                        <th scope="col">Login of user</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,14 +51,18 @@
                 </tbody>
             </table>
         </div>
+        {% endif %}
     {% elif session['role'] == 'executor' %}
+        {% if orders_len == 0 %}
+        <p>There is no orders awaiting for execution</p>
+        {% elif orders_len != 0 %}
         <div class="orders-table-executor">
             <table>
                 <thead>
                     <tr>
                         <th scope="col">Description of order</th>
                         <th scope="col">Price of order</th>
-{#                        <th scope="col">Login of user</th>#}
+                        <th scope="col">Login of user</th>
                         <th scope="col">Execute an order</th>
                     </tr>
                 </thead>
@@ -64,12 +71,11 @@
                     <tr>
                         <td>{{ order.Order.description_of_order }}</td>
                         <td>{{ order.Order.price_of_order }}</td>
-{#                        <td>{{ order.User.login_of_user }}</td>#}
+                        <td>{{ order.User.login_of_user }}</td>
                         <td>
-                            <form>
-                                {{ executing_order_form.hidden_tag() }}
-                                {{ executing_order_form.id_of_order_form(value=order.ExecutorOfOrder.id_of_order) }}
-                                {{ executing_order_form.submit_execute_field(placeholder_="Execute order") }}
+                            <form class="executing-order-form" action="{{ url_for('order') }}" method="post">
+                                {{ executing_order_form.id_of_order_form(value=order.Order.id_of_order) }}
+                                {{ executing_order_form.submit_execute_field() }}
                             </form>
                         </td>
                     </tr>
@@ -77,7 +83,39 @@
                 </tbody>
             </table>
         </div>
+        {% endif %}
     {% elif session['role'] == 'moderator' %}
+        {% if orders_len == 0 %}
+        <p>There is no orders awaiting for execution</p>
+        {% elif orders_len != 0 %}
+        <div class="orders-table-moderator">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Description of order</th>
+                        <th scope="col">Price of order</th>
+                        <th scope="col">Login of user</th>
+                        <th scope="col">Delete an order</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.Order.description_of_order }}</td>
+                        <td>{{ order.Order.price_of_order }}</td>
+                        <td>{{ order.User.login_of_user }}</td>
+                        <td>
+                            <form class="deleting-order-form" action="{{ url_for('order') }}" method="post">
+                                {{ deleting_order_form.id_of_order_form(value=order.Order.id_of_order) }}
+                                {{ deleting_order_form.submit_delete_field() }}
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
     {% endif %}
 </body>
 </html>
