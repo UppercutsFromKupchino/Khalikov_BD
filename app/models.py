@@ -51,18 +51,24 @@ class User(db.Model, UserMixin):
             flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()
 
+    @staticmethod
+    def get_user(id_user):
+        query = db.session.query(User).filter(User.id_of_user == id_user).one()
+        return query
+
 
 class Order(db.Model):
     __tablename__ = '_order'
     __table_args__ = {'extend_existing': True}
 
-    # @staticmethod
-    # def get_orders_consumer(id_of_consumer):
-    #     query = db.session.query(Order, ExecutorOfOrder, User)
-    #     query = query.join(ExecutorOfOrder, Order.id_of_order == ExecutorOfOrder.id_of_order)
-    #     query = query.join(User, User.id_of_user == Order.id_of_consumer)
-    #     query = query.filter_by(ExecutorOfOrder.id_of_executor is None and Order.id_of_consumer != id_of_consumer)
-    #     return query
+    @staticmethod
+    def get_orders_consumer():
+        query = db.session.query(Order, ExecutorOfOrder, User)
+        query = query.outerjoin(ExecutorOfOrder, Order.id_of_order == ExecutorOfOrder.id_of_order)
+        query = query.join(User, User.id_of_user == Order.id_of_consumer)
+        query = query.filter(None == ExecutorOfOrder.id_of_order)
+        # query = query.filter(Order.id_of_consumer != consumer).all()
+        return query.all()
 
     @staticmethod
     def add_order(datetime, description, price, id_of_consumer):
@@ -77,20 +83,117 @@ class Order(db.Model):
             flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()
 
+    @staticmethod
+    def get_all_orders():
+        query = db.session.query(Order, User)
+        query = query.join(User, User.id_of_user == Order.id_of_consumer)
+        return query
+
+    @staticmethod
+    def delete_order(id_of_order):
+        order_to_delete = Order(id_of_order=id_of_order)
+
+        try:
+            db.session.delete(order_to_delete)
+            db.session.commit()
+            flash('Заказ успешно удалён')
+        except:
+            flash('Ошибка взаимодействия с базой данных')
+            db.session.rollback()
+
+    @staticmethod
+    def get_orders_profile_consumer(id_consumer):
+        query = db.session.query(Order, ExecutorOfOrder, User)
+        query = query.outerjoin(ExecutorOfOrder, Order.id_of_order == ExecutorOfOrder.id_of_order)
+        query = query.join(User, ExecutorOfOrder.id_of_executor == User.id_of_user)
+        query = query.filter(None != ExecutorOfOrder.id_of_executor)
+        query = query.filter(Order.id_of_consumer == id_consumer)
+        return query.all()
 
 class Ad(db.Model):
     __tablename__ = 'ad'
     __table_args__ = {'extend_existing': True}
+
+    @staticmethod
+    def get_ad_executor():
+        query = db.session.query(Ad, ConsumerOfAd, User)
+        query = query.outerjoin(ConsumerOfAd, ConsumerOfAd.id_of_ad == Ad.id_of_ad)
+        query = query.join(User, User.id_of_user == Ad.id_of_executor)
+        query = query.filter(None == ConsumerOfAd.id_of_ad)
+        return query.all()
+
+    @staticmethod
+    def add_ad(datetime_of_ad, description_of_ad, price_of_ad, id_of_executor):
+        ad_to_add = Ad(datetime_of_ad=datetime_of_ad, description_of_ad=description_of_ad,
+                       price_of_ad=price_of_ad, id_of_executor=id_of_executor)
+
+        try:
+            db.session.add(ad_to_add)
+            db.session.commit()
+            flash('Объявление успешно добавлено')
+        except:
+            flash('Ошибка взаимодействия с базой данных')
+            db.session.rollback()
+
+    @staticmethod
+    def get_all_ads():
+        query = db.session.query(Ad, User)
+        query = query.join(User, Ad.id_of_executor == User.id_of_user)
+        return query
+
+    @staticmethod
+    def delete_ad(id_of_ad):
+        ad_to_delete = Ad(id_of_ad=id_of_ad)
+
+        try:
+            db.session.delete(ad_to_delete)
+            db.session.commit()
+            flash('Объявление успешно удалено')
+        except:
+            flash('Ошибка взаимодействия с базой данных')
+            db.session.rollback()
+
+    @staticmethod
+    def get_ads_profile_consumer(id_consumer):
+        query = db.session.query(Ad, ConsumerOfAd, User)
+        query = query.outerjoin(ConsumerOfAd, ConsumerOfAd.id_of_ad == Ad.id_of_ad)
+        query = query.join(User, Ad.id_of_executor == User.id_of_user)
+        query = query.filter(ConsumerOfAd.id_of_consumer == id_consumer)
+        return query.all()
 
 
 class ConsumerOfAd(db.Model):
     __tablename__ = 'consumer_of_ad'
     __table_args__ = {'extend_existing': True}
 
+    @staticmethod
+    def consume_ad(id_of_consumer, id_of_ad):
+        ad_to_consume = ConsumerOfAd(id_of_consumer=id_of_consumer, id_of_ad=id_of_ad)
+
+        try:
+            db.session.add(ad_to_consume)
+            db.session.commit()
+            flash('Объявление успешно заказано')
+        except:
+            flash('Ошибка взаимодействия с базой данных')
+            db.session.rollback()
+
 
 class ExecutorOfOrder(db.Model):
     __tablename__ = 'executor_of_order'
     __table_args__ = {'extend_existing': True}
+
+    @staticmethod
+    def execute_order(id_of_executor, id_of_order):
+        order_to_execute = ExecutorOfOrder(id_of_executor=id_of_executor, id_of_order=id_of_order)
+
+        try:
+            db.session.add(order_to_execute)
+            db.session.commit()
+            flash('Заказ успешно принят к исполнению')
+        except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
+            db.session.rollback()
 
 
 class Feedback(db.Model):

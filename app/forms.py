@@ -19,9 +19,9 @@ class RegisterForm(FlaskForm):
     submitfield = SubmitField()
 
 
-class FeedbackForm(FlaskForm):
+class AddingFeedbackForm(FlaskForm):
     textfield = StringField(validators=[DataRequired()])
-    submitfield = SubmitField()
+    submitfield = SubmitField("Add feedback")
 
 
 class DeletingFeedbackForm(FlaskForm):
@@ -32,5 +32,40 @@ class DeletingFeedbackForm(FlaskForm):
 class AddingOrderForm(FlaskForm):
     description_of_order = StringField(validators=[DataRequired()])
     price_of_order = IntegerField(validators=[DataRequired()])
-    submitfield = SubmitField()
+    submitfield = SubmitField("Add order")
 
+
+class ExecutingOrderForm(FlaskForm):
+    id_of_order_form = HiddenField()
+    submit_execute_field = SubmitField("Execute order")
+
+
+class DeletingOrderForm(FlaskForm):
+    id_of_order_form = HiddenField()
+    submit_delete_field = SubmitField("Delete order")
+
+
+class AddingAdForm(FlaskForm):
+    description_of_ad = StringField(validators=[DataRequired()])
+    price_of_ad = IntegerField(validators=[DataRequired()])
+    submit_add_field = SubmitField()
+
+
+class ConsumeAdForm(FlaskForm):
+    id_of_ad_form = HiddenField()
+    submit_consume_field = SubmitField("Consume ad")
+
+
+class DeletingAdForm(FlaskForm):
+    id_of_ad_form = HiddenField()
+    submit_delete_field = SubmitField("Delete ad")
+
+
+class RedirectingToConversationConsumerForm(FlaskForm):
+    id_of_executor_form = HiddenField()
+    submit_redirecting_field = SubmitField("Go to conversation")
+
+
+class RedirectingToConversationExecutorForm(FlaskForm):
+    id_of_consumer_form = HiddenField()
+    submit_redirecting_field = SubmitField("Go to conversation")
