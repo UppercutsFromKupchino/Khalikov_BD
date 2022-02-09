@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Ad</title>
 </head>
 <body>
     <div class="cap-links">
         <a href="{{ url_for('index') }}">Home page</a>
         <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
     </div>
     {% with messages = get_flashed_messages() %}
     {% if messages %}

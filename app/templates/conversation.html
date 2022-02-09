@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Messages</title>
+</head>
+<body>
+    <div class="cap-links">
+        <a href="{{ url_for('index') }}">Home page</a>
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+     <ul>
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+     </ul>
+    {% endif %}
+    {% endwith %}
+    <div class="div-messages-field">
+        <div class="messages-list">
+            <ul>
+                {% for message_in_conv in messages_in_conv %}
+                <li>
+                    <p>{{ message_in_conv.User.login_of_user }}</p>
+                    <p>{{ message_in_conv.Message.text_of_message }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="adding-messages-form">
+            <form action="{{ url_for('conversation', receiver=receiver) }}" method="post">
+                {{ adding_message_form.text_of_message_field(class_="text-of-message") }}<br>
+                {{ adding_message_form.submit_adding_field() }}
+            </form>
+        </div>
+    </div>
+</body>
+</html>

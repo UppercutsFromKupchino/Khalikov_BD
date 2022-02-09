@@ -69,3 +69,8 @@ class RedirectingToConversationConsumerForm(FlaskForm):
 class RedirectingToConversationExecutorForm(FlaskForm):
     id_of_consumer_form = HiddenField()
     submit_redirecting_field = SubmitField("Go to conversation")
+
+
+class AddingMessageForm(FlaskForm):
+    text_of_message_field = StringField()
+    submit_adding_field = SubmitField("Add message")

@@ -265,3 +265,38 @@ class RoleOfUser(db.Model):
     def get_role_for_id(id_of_role):
         chosen_role = RoleOfUser.query.filter_by(id_of_role=id_of_role).one()
         return chosen_role.name_of_role
+
+
+class Message(db.Model):
+    __tablename__ = '_message'
+    __table_args__ = {'extend_existing': True}
+
+    @staticmethod
+    def get_messages(id_sender, id_receiver):
+        query_1 = db.session.query(Message, User)
+        query_1 = query_1.join(User, Message.id_of_receiver == User.id_of_user)
+        query_1 = query_1.filter(Message.id_of_sender == id_sender)
+        query_1 = query_1.filter(Message.id_of_receiver == id_receiver)
+
+        query_2 = db.session.query(Message, User)
+        query_2 = query_2.join(User, Message.id_of_receiver == User.id_of_user)
+        query_2 = query_2.filter(Message.id_of_sender == id_receiver)
+        query_2 = query_2.filter(Message.id_of_receiver == id_sender)
+
+        query = query_1.union(query_2)
+
+        query = query.order_by(Message.datetime_of_message.desc())
+        return query
+
+    @staticmethod
+    def add_message(id_of_sender, text_of_message, datetime_of_message, id_of_receiver):
+        message_to_add = Message(id_of_sender=id_of_sender, text_of_message=text_of_message,
+                                 datetime_of_message=datetime_of_message, id_of_receiver=id_of_receiver)
+
+        try:
+            db.session.add(message_to_add)
+            db.session.commit()
+            flash('Сообщение успешно отправлено')
+        except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
+            db.session.rollback()

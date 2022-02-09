@@ -4,7 +4,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from app.forms import LoginForm, RegisterForm, AddingFeedbackForm, DeletingFeedbackForm, AddingOrderForm
 from app.forms import DeletingOrderForm, ExecutingOrderForm, AddingAdForm, ConsumeAdForm, DeletingAdForm
 from app.forms import RedirectingToConversationConsumerForm, RedirectingToConversationExecutorForm
-from app.models import User, RoleOfUser, Feedback, Order, ExecutorOfOrder, Ad, ConsumerOfAd
+from app.forms import AddingMessageForm
+from app.models import User, RoleOfUser, Feedback, Order, ExecutorOfOrder, Ad, ConsumerOfAd, Message
 import datetime
 
 
@@ -182,11 +183,12 @@ def ad():
         return render_template("ad.html", ads=ads, deleting_ad_form=deleting_ad_form)
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
 
     user = User.get_user(current_user.get_id())
+    print(current_user.get_id())
 
     if session['role'] == 'consumer':
 
@@ -197,22 +199,48 @@ def profile():
         ads = Ad.get_ads_profile_consumer(current_user.get_id())
         ads_len = len(ads)
 
-        # if redirecting_to_conversation_consumer_form.submit_redirecting_field.data:
-        #
-        #     session
+        if redirecting_to_conversation_consumer_form.submit_redirecting_field.data:
+            return redirect(url_for('conversation',
+                                    receiver=redirecting_to_conversation_consumer_form.id_of_executor_form.data))
 
         return render_template("profile.html", user=user, orders=orders, ads=ads,
-                               orders_len=orders_len, ads_len=ads_len)
+                               orders_len=orders_len, ads_len=ads_len,
+                               redirecting_to_conversation_consumer_form=redirecting_to_conversation_consumer_form)
 
     elif session['role'] == 'executor':
+
+        redirecting_to_conversation_executor_form = RedirectingToConversationExecutorForm()
 
         orders = Order.get_orders_profile_executor(current_user.get_id())
         orders_len = len(orders)
         ads = Ad.get_ads_profile_executor(current_user.get_id())
         ads_len = len(ads)
 
+        if redirecting_to_conversation_executor_form.submit_redirecting_field.data:
+            return redirect(url_for('conversation',
+                                    receiver=redirecting_to_conversation_executor_form.id_of_consumer_form.data))
+
         return render_template("profile.html", user=user, orders=orders, ads=ads,
-                               orders_len=orders_len, ads_len=ads_len)
+                               orders_len=orders_len, ads_len=ads_len,
+                               redirecting_to_conversation_executor_form=redirecting_to_conversation_executor_form)
+
+
+@app.route('/conversation/<receiver>', methods=['GET', 'POST'])
+@login_required
+def conversation(receiver):
+
+    messages_in_conv = Message.get_messages(current_user.get_id(), receiver)
+    adding_message_form = AddingMessageForm()
+
+    if adding_message_form.submit_adding_field.data:
+
+        current_time = datetime.datetime.now()
+        Message.add_message(current_user.get_id(), adding_message_form.text_of_message_field.data,
+                            current_time, receiver)
+        return redirect(url_for('conversation', receiver=receiver))
+
+    return render_template("conversation.html", receiver=receiver, messages_in_conv=messages_in_conv,
+                           adding_message_form=adding_message_form)
 
 
 @app.route('/logout')
