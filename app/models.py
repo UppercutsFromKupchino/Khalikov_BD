@@ -110,6 +110,15 @@ class Order(db.Model):
         query = query.filter(Order.id_of_consumer == id_consumer)
         return query.all()
 
+    @staticmethod
+    def get_orders_profile_executor(id_executor):
+        query = db.session.query(Order, ExecutorOfOrder, User)
+        query = query.outerjoin(ExecutorOfOrder, ExecutorOfOrder.id_of_order == Order.id_of_order)
+        query = query.join(User, User.id_of_user == Order.id_of_consumer)
+        query = query.filter(ExecutorOfOrder.id_of_executor == id_executor)
+        return query.all()
+
+
 class Ad(db.Model):
     __tablename__ = 'ad'
     __table_args__ = {'extend_existing': True}
@@ -159,6 +168,15 @@ class Ad(db.Model):
         query = query.outerjoin(ConsumerOfAd, ConsumerOfAd.id_of_ad == Ad.id_of_ad)
         query = query.join(User, Ad.id_of_executor == User.id_of_user)
         query = query.filter(ConsumerOfAd.id_of_consumer == id_consumer)
+        return query.all()
+
+    @staticmethod
+    def get_ads_profile_executor(id_executor):
+        query = db.session.query(Ad, ConsumerOfAd, User)
+        query = query.outerjoin(ConsumerOfAd, Ad.id_of_ad == ConsumerOfAd.id_of_ad)
+        query = query.join(User, User.id_of_user == ConsumerOfAd.id_of_consumer)
+        query = query.filter(Ad.id_of_executor == id_executor)
+        query = query.filter(None != ConsumerOfAd.id_of_consumer)
         return query.all()
 
 

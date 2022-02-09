@@ -29,13 +29,21 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col">Descriprion of order</th>
+                    <th scope="col">Price of order</th>
+                    <th scope="col">Date of order</th>
+                    <th scope="col">Login of executor</th>
                 </tr>
             </thead>
             <tbody>
+            {% for order in orders %}
                 <tr>
-                    <td></td>
+                    <td>{{ order.Order.description_of_order }}</td>
+                    <td>{{ order.Order.price_of_order }}</td>
+                    <td>{{ order.Order.datetime_of_order }}</td>
+                    <td>{{ order.User.login_of_user }}</td>
                 </tr>
+            {% endfor %}
             </tbody>
         </table>
         {% endif %}
@@ -48,37 +56,26 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col">Description of ad</th>
+                    <th scope="col">Price of ad</th>
+                    <th scope="col">Date of ad</th>
+                    <th scope="col">Login_of_executor</th>
                 </tr>
             </thead>
             <tbody>
+            {% for ad in ads %}
                 <tr>
-                    <td></td>
+                    <td>{{ ad.Ad.description_of_ad }}</td>
+                    <td>{{ ad.Ad.price_of_ad }}</td>
+                    <td>{{ ad.Ad.datetime_of_ad }}</td>
+                    <td>{{ ad.User.login_of_user }}</td>
                 </tr>
+            {% endfor %}
             </tbody>
         </table>
         {% endif %}
     </div>
     {% elif session['role'] == 'executor' %}
-    <div class="executor-profile-orders-table">
-        {% if ads_len == 0 %}
-            <p>There is no orders awaiting for execution</p>
-        {% elif ads_len != 0 %}
-        <table>
-            <thead>
-                <tr>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-        {% endif %}
-    </div>
-    <br>
     <div class="executor-profile-orders-table">
         {% if orders_len == 0 %}
             <p>There is no orders awaiting for execution</p>
@@ -86,13 +83,48 @@
         <table>
             <thead>
                 <tr>
-                    <th scope="col"></th>
+                    <th scope="col">Description of order</th>
+                    <th scope="col">Price of order</th>
+                    <th scope="col">Date of order</th>
+                    <th scope="col">Login of consumer</th>
                 </tr>
             </thead>
             <tbody>
+            {% for order in orders %}
                 <tr>
-                    <td></td>
+                    <td>{{ order.Order.description_of_order }}</td>
+                    <td>{{ order.Order.price_of_order }}</td>
+                    <td>{{ order.Order.datetime_of_order }}</td>
+                    <td>{{ order.User.login_of_user }}</td>
                 </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    <br>
+    <div class="executor-profile-orders-table">
+        {% if ads_len == 0 %}
+            <p>There is no orders awaiting for execution</p>
+        {% elif ads_len != 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Description of ad</th>
+                    <th scope="col">Price of ad</th>
+                    <th scope="col">Date of ad</th>
+                    <th scope="col">Login of consumer</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for ad in ads %}
+                <tr>
+                    <td>{{ ad.Ad.description_of_ad }}</td>
+                    <td>{{ ad.Ad.price_of_ad }}</td>
+                    <td>{{ ad.Ad.datetime_of_ad }}</td>
+                    <td>{{ ad.User.login_of_user }}</td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
         {% endif %}

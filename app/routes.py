@@ -206,7 +206,13 @@ def profile():
 
     elif session['role'] == 'executor':
 
-        return render_template("profile.html", user=user)
+        orders = Order.get_orders_profile_executor(current_user.get_id())
+        orders_len = len(orders)
+        ads = Ad.get_ads_profile_executor(current_user.get_id())
+        ads_len = len(ads)
+
+        return render_template("profile.html", user=user, orders=orders, ads=ads,
+                               orders_len=orders_len, ads_len=ads_len)
 
 
 @app.route('/logout')
