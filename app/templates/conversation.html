@@ -24,7 +24,7 @@
             <ul>
                 {% for message_in_conv in messages_in_conv %}
                 <li>
-                    <p>{{ message_in_conv.User.login_of_user }}</p>
+                    <p>{{ message_in_conv.UserSender.login_of_user }}</p>
                     <p>{{ message_in_conv.Message.text_of_message }}</p>
                 </li>
                 {% endfor %}

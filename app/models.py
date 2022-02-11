@@ -3,6 +3,8 @@ from app import db
 from app import bcrypt
 from app import login_manager
 from flask import flash
+from sqlalchemy.orm import aliased
+from sqlalchemy import and_, or_
 
 
 @login_manager.user_loader
@@ -273,20 +275,20 @@ class Message(db.Model):
 
     @staticmethod
     def get_messages(id_sender, id_receiver):
-        query_1 = db.session.query(Message, User)
-        query_1 = query_1.join(User, Message.id_of_receiver == User.id_of_user)
-        query_1 = query_1.filter(Message.id_of_sender == id_sender)
-        query_1 = query_1.filter(Message.id_of_receiver == id_receiver)
 
-        query_2 = db.session.query(Message, User)
-        query_2 = query_2.join(User, Message.id_of_receiver == User.id_of_user)
-        query_2 = query_2.filter(Message.id_of_sender == id_receiver)
-        query_2 = query_2.filter(Message.id_of_receiver == id_sender)
+        UserSender = aliased(User, name='UserSender')
+        UserReceiver = aliased(User, name='UserReceiver')
 
-        query = query_1.union(query_2)
+        query = db.session.query(Message, UserSender, UserReceiver)
+        query = query.join(UserSender, UserSender.id_of_user == Message.id_of_sender)
+        query = query.join(UserReceiver, UserReceiver.id_of_user == Message.id_of_receiver)
+
+        query = query.filter(or_(and_(Message.id_of_sender == id_sender, Message.id_of_receiver == id_receiver),
+                                 and_(Message.id_of_sender == id_receiver, Message.id_of_receiver == id_sender)))
 
         query = query.order_by(Message.datetime_of_message.desc())
-        return query
+
+        return query.all()
 
     @staticmethod
     def add_message(id_of_sender, text_of_message, datetime_of_message, id_of_receiver):
