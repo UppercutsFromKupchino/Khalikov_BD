@@ -93,10 +93,8 @@ class Order(db.Model):
 
     @staticmethod
     def delete_order(id_of_order):
-        order_to_delete = Order(id_of_order=id_of_order)
-
         try:
-            db.session.delete(order_to_delete)
+            Order.query.filter_by(id_of_order=id_of_order).delete()
             db.session.commit()
             flash('Заказ успешно удалён')
         except:
@@ -154,10 +152,8 @@ class Ad(db.Model):
 
     @staticmethod
     def delete_ad(id_of_ad):
-        ad_to_delete = Ad(id_of_ad=id_of_ad)
-
         try:
-            db.session.delete(ad_to_delete)
+            Ad.query.filter_by(id_of_ad=id_of_ad).delete()
             db.session.commit()
             flash('Объявление успешно удалено')
         except:
@@ -198,6 +194,16 @@ class ConsumerOfAd(db.Model):
             flash('Ошибка взаимодействия с базой данных')
             db.session.rollback()
 
+    @staticmethod
+    def delete_ad(id_of_ad):
+        try:
+            ConsumerOfAd.query.filter_by(id_of_ad=id_of_ad).delete()
+            db.session.commit()
+            flash('Удаление объявления в процессе')
+        except:
+            flash('Ошибка взаимодействия с базой данных')
+            db.session.rollback()
+
 
 class ExecutorOfOrder(db.Model):
     __tablename__ = 'executor_of_order'
@@ -211,6 +217,16 @@ class ExecutorOfOrder(db.Model):
             db.session.add(order_to_execute)
             db.session.commit()
             flash('Заказ успешно принят к исполнению')
+        except:
+            flash('Ошибка взаимодействия с базой данных. Повторите позже')
+            db.session.rollback()
+
+    @staticmethod
+    def delete_order(id_of_order):
+        try:
+            ExecutorOfOrder.query.filter_by(id_of_order=id_of_order).delete()
+            db.session.commit()
+            flash('Удаление в процессе')
         except:
             flash('Ошибка взаимодействия с базой данных. Повторите позже')
             db.session.rollback()

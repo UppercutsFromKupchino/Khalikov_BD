@@ -128,6 +128,7 @@ def order():
 
         if deleting_order_form.submit_delete_field.data:
 
+            ExecutorOfOrder.delete_order(deleting_order_form.id_of_order_form.data)
             Order.delete_order(deleting_order_form.id_of_order_form.data)
             return redirect(url_for('order'))
 
@@ -177,7 +178,8 @@ def ad():
 
         if deleting_ad_form.submit_delete_field.data:
 
-            Order.delete_order(deleting_ad_form.id_of_ad_form.data)
+            ConsumerOfAd.delete_ad(deleting_ad_form.id_of_ad_form.data)
+            Ad.delete_ad(deleting_ad_form.id_of_ad_form.data)
             return redirect(url_for('ad'))
 
         return render_template("ad.html", ads=ads, deleting_ad_form=deleting_ad_form)
