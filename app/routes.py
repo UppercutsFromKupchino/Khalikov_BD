@@ -226,6 +226,9 @@ def profile():
                                orders_len=orders_len, ads_len=ads_len,
                                redirecting_to_conversation_executor_form=redirecting_to_conversation_executor_form)
 
+    elif session['role'] == 'moderator':
+        return redirect(url_for('index'))
+
 
 @app.route('/conversation/<receiver>', methods=['GET', 'POST'])
 @login_required

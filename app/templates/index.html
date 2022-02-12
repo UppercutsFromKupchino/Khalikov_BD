@@ -15,7 +15,9 @@
         <a href="{{ url_for('order') }}">Orders</a>
         <a href="{{ url_for('ad') }}">Ads</a>
         <a href="{{ url_for('logout') }}">Logout</a>
+        {% if session['role'] != 'moderator' %}
         <a href="{{ url_for('profile') }}">Profile</a>
+        {% endif %}
         {% endif %}
     </div>
     <p>This is home page</p>
